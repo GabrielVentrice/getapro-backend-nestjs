@@ -21,11 +21,25 @@ export class StudentService {
       throw new HttpException('Email already registred', HttpStatus.CONFLICT);
     }
 
+    if (!createStudentDto.password) {
+      createStudentDto.password = (Math.random() + 1).toString(36).substring(7);
+    }
+
     return this.prisma.student.create({ data: createStudentDto });
   }
 
   findById(id: number) {
     return this.prisma.student.findFirst({ where: { id } });
+  }
+
+  async findOne(email: string) {
+    const student = await this.prisma.student.findFirst({ where: { email } });
+
+    if (!student) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    return student;
   }
 
   async remove(id: number) {

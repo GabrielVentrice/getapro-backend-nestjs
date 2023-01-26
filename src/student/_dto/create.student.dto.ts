@@ -13,4 +13,7 @@ export class CreateStudentDto {
   @IsEmail()
   @ApiProperty()
   email: string;
+
+  @ApiProperty()
+  password: string;
 }
