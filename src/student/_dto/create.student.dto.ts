@@ -15,5 +15,7 @@ export class CreateStudentDto {
   email: string;
 
   @ApiProperty()
+  @MinLength(5)
+  @IsNotEmpty()
   password: string;
 }

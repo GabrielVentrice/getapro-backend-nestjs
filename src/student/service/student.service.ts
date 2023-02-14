@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateStudentDto } from '../_dto/create.student.dto';
+import * as argon from 'argon2';
 
 @Injectable()
 export class StudentService {
@@ -10,22 +11,32 @@ export class StudentService {
     return this.prisma.student.findMany();
   }
 
-  async create(createStudentDto: CreateStudentDto) {
+  async create(dto: CreateStudentDto) {
     const existUser = await this.prisma.student.findUnique({
-      where: { email: createStudentDto.email },
+      where: { email: dto.email },
     });
 
-    console.log(existUser);
+    console.log('CREATE_USER__DTO', dto);
 
     if (existUser) {
       throw new HttpException('Email already registred', HttpStatus.CONFLICT);
     }
 
-    if (!createStudentDto.password) {
-      createStudentDto.password = (Math.random() + 1).toString(36).substring(7);
-    }
+    // if (!dto.password) {
+    //   dto.password = (Math.random() + 1).toString(36).substring(7);
+    // }
 
-    return this.prisma.student.create({ data: createStudentDto });
+    const hash = await argon.hash(dto.password);
+    delete dto.password;
+
+    const newUser = await this.prisma.student.create({
+      data: { ...dto, hash },
+    });
+
+    delete newUser.hash;
+    delete newUser.hashRt;
+
+    return newUser;
   }
 
   findById(id: number) {
