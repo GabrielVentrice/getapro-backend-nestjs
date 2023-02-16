@@ -25,10 +25,8 @@ jobs:
     env:
       DATABASE_URL: postgresql://postgres:123@localhost:5432/mydb?schema=public
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: '18.x'
+      - uses: actions/checkout@v3
+      
       - run: npm ci
       # run the migration in the test database
       - run: npm run db:push
