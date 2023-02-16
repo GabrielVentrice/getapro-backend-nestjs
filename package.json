@@ -2,7 +2,7 @@
   "name": "getapro-backend-nestjs",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "author": "Gabriel Ventrice Capanema",
   "private": true,
   "license": "UNLICENSED",
   "prisma": {
@@ -21,10 +21,18 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "postgres:start": "docker-compose up -d",
+    "db:push": "prisma db push --preview-feature",
+    "migrate:reset": "prisma migrate reset",
+    "migrate:create": "prisma migrate dev --create-only",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
+    "prisma:generate": "prisma generate"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
+    "@nestjs/config": "^2.3.1",
     "@nestjs/core": "^8.0.0",
     "@nestjs/jwt": "^10.0.1",
     "@nestjs/passport": "^9.0.0",

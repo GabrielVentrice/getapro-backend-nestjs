@@ -22,10 +22,6 @@ export class StudentService {
       throw new HttpException('Email already registred', HttpStatus.CONFLICT);
     }
 
-    // if (!dto.password) {
-    //   dto.password = (Math.random() + 1).toString(36).substring(7);
-    // }
-
     const hash = await argon.hash(dto.password);
     delete dto.password;
 
