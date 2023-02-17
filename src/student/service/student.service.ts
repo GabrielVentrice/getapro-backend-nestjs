@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateStudentDto } from '../_dto/create.student.dto';
 import * as argon from 'argon2';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class StudentService {

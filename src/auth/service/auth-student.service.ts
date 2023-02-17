@@ -1,12 +1,12 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { StudentService } from 'src/student/service/student.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as argon from 'argon2';
 import { Tokens } from '../types/tokens.type';
 import { AuthDto } from '../_dto/auth.user.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtPayload } from '../types/jwtPayload.type';
+import { StudentService } from '../../student/service/student.service';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class AuthService {
