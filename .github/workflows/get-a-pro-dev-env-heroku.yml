@@ -29,7 +29,7 @@ jobs:
           # Maps TCP port 5432 on service container to the host
           - 5432:5432
     env:
-      DATABASE_URL: postgresql://postgres:123@localhost:5432/mydb?schema=public
+      DATABASE_URL: postgresql://postgres:123@localhost:5432/getapro-backend-nestjs
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
