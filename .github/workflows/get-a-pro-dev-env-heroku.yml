@@ -57,9 +57,14 @@ jobs:
       
       
        - run: yarn install --frozen-lockfile
+
+       - name: 'Create env file'
+         run: |
+           touch .env
+           echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env
+           cat .env
+
        - name: Run production migration
-         env:
-           DATABASE_URL: ${{ secrets.DATABASE_URL }}
          run: yarn migrate:deploy
          
        - uses: akhileshns/heroku-deploy@v3.4.6
