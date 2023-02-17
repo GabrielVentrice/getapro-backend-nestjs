@@ -1,5 +1,8 @@
-name: get-a-pro
-on: push
+name: Deploy Dev environment
+on:
+  push:
+    branches:
+      - develop
 
 jobs:
   test:
@@ -58,14 +61,11 @@ jobs:
       
        - run: yarn install --frozen-lockfile
 
-       - name: 'Create env file'
-         run: |
-           touch .env
-           echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env
-           cat .env
-
        - name: Run production migration
          run: yarn migrate:deploy
+         env:
+            NODE_ENV: development
+            DATABASE_URL: ${{ secrets.DATABASE_URL }}
          
        - uses: akhileshns/heroku-deploy@v3.4.6
          with:
