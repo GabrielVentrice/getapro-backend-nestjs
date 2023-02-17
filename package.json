@@ -28,7 +28,9 @@
     "migrate:create": "prisma migrate dev --create-only",
     "migrate:dev": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy",
-    "prisma:generate": "prisma generate"
+    "prisma:generate": "prisma generate",
+    "seed": "prisma db seed --preview-feature",
+    "seed-users": "ts-node ./src/seed-users.ts"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
