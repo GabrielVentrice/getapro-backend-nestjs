@@ -19,7 +19,7 @@ jobs:
         # Provide the password for postgres
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_PASSWORD: 123
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
