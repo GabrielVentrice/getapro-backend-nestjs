@@ -48,7 +48,7 @@ jobs:
       - run: yarn run test
   deploy:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/develop' # Only deploy master
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop' # Only deploy develop
     needs: test
     steps:
        - uses: actions/checkout@v3
@@ -65,10 +65,10 @@ jobs:
          run: yarn migrate:deploy
          env:
             NODE_ENV: development
-            DATABASE_URL: ${{ secrets.DATABASE_URL }}
+            DATABASE_URL: ${{ secrets.DATABASE_URL_DEV }}
          
        - uses: akhileshns/heroku-deploy@v3.4.6
          with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
-          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY_DEV }}
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME_DEV }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL_DEV }}
