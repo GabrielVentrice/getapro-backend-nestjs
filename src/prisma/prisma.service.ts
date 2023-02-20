@@ -34,6 +34,6 @@ export class PrismaService extends PrismaClient {
     if (process.env.NODE_ENV === 'production') return;
 
     // teardown logic
-    return Promise.all([this.student.deleteMany()]);
+    return Promise.all([this.student.deleteMany(), this.teacher.deleteMany()]);
   }
 }
