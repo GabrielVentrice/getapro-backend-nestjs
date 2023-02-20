@@ -12,21 +12,20 @@ export class StudentService {
   }
 
   async create(dto: CreateStudentDto) {
+    const { email, password, name } = dto;
+
     const existUser = await this.prisma.student.findUnique({
-      where: { email: dto.email },
+      where: { email },
     });
 
-    console.log('CREATE_USER__DTO', dto);
-
     if (existUser) {
-      throw new HttpException('Email already registred', HttpStatus.CONFLICT);
+      throw new HttpException('Email already registred', HttpStatus.FORBIDDEN);
     }
 
-    const hash = await argon.hash(dto.password);
-    delete dto.password;
+    const hash = await argon.hash(password);
 
     const newUser = await this.prisma.student.create({
-      data: { ...dto, hash },
+      data: { email, name, hash },
     });
 
     delete newUser.hash;

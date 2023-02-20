@@ -7,9 +7,10 @@ import { AuthDto } from '../_dto/auth.user.dto';
 import { JwtPayload } from '../types/jwtPayload.type';
 import { StudentService } from '../../student/service/student.service';
 import { PrismaService } from '../../prisma/prisma.service';
+import { CreateStudentDto } from '../../student/_dto/create.student.dto';
 
 @Injectable()
-export class AuthService {
+export class AuthStudentService {
   constructor(
     private studentService: StudentService,
     private jwtService: JwtService,
@@ -17,19 +18,28 @@ export class AuthService {
     private config: ConfigService,
   ) {}
 
-  async signinLocalStudent(dto: AuthDto): Promise<Tokens> {
-    const user = await this.studentService.findOne(dto.email);
+  async signinLocalStudent({ email, password }: AuthDto): Promise<Tokens> {
+    const user = await this.prismaService.student.findFirst({
+      where: { email },
+    });
 
     if (!user) throw new ForbiddenException('Access Denied');
 
-    console.log('SIGNLOCAL_STUDENT__USER:', user);
-
-    const passwordMatches = await argon.verify(user.hash, dto.password);
+    const passwordMatches = await argon.verify(user.hash, password);
 
     if (!passwordMatches) throw new ForbiddenException('Access Denied');
 
     const tokens = await this.getTokens(user.id, user.email);
     await this.updateRtHash(user.id, tokens.refresh_token);
+
+    return tokens;
+  }
+
+  async singup(dto: CreateStudentDto): Promise<Tokens> {
+    const newUser = await this.studentService.create(dto);
+
+    const tokens = await this.getTokens(newUser.id, newUser.email);
+    await this.updateRtHash(newUser.id, tokens.refresh_token);
 
     return tokens;
   }

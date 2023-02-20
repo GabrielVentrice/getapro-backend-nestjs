@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AuthService } from './service/auth-student.service';
+import { AuthStudentService } from './service/auth-student.service';
 import { AuthController } from './controller/auth.controller';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './strategy/local.strategy';
@@ -12,7 +12,7 @@ import { PrismaService } from '../prisma/prisma.service';
 @Module({
   imports: [StudentModule, PassportModule, JwtModule.register({})],
   providers: [
-    AuthService,
+    AuthStudentService,
     LocalStrategy,
     PrismaService,
     JwtService,
