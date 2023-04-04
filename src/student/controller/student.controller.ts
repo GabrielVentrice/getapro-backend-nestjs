@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateStudentDto } from '../_dto/create.student.dto';
 import { StudentService } from '../service/student.service';
@@ -19,14 +27,12 @@ export class StudentController {
   }
 
   @Get(':id')
-  async findOne(@Param() params) {
-    console.log(params.id);
-
-    return await this.studentService.findById(parseInt(params.id, 10));
+  async findOne(@Param('id', ParseIntPipe) userId) {
+    return await this.studentService.findById(userId);
   }
 
   @Delete(':id')
-  async remove(@Param() params) {
-    return await this.studentService.remove(parseInt(params.id, 10));
+  async remove(@Param('id', ParseIntPipe) userId) {
+    return await this.studentService.remove(userId);
   }
 }

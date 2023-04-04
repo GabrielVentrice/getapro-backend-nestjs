@@ -1,13 +1,16 @@
 import { Module } from '@nestjs/common';
-import { AuthStudentService } from './service/auth-student.service';
-import { AuthController } from './controller/auth.controller';
-import { PassportModule } from '@nestjs/passport';
-import { LocalStrategy } from './strategy/local.strategy';
-import { JwtModule, JwtService } from '@nestjs/jwt';
-import { AccessTokenStrategy, RefreshTokenStrategy } from './strategy';
 import { ConfigService } from '@nestjs/config';
-import { StudentModule } from '../student/student.module';
-import { PrismaService } from '../prisma/prisma.service';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+import { StudentModule } from 'src/student/student.module';
+import { AuthController } from './controller/auth.controller';
+import { AuthStudentService } from './service/auth-student.service';
+import { PrismaService } from 'src/prisma/prisma.service';
+import {
+  LocalStrategy,
+  AccessTokenStrategy,
+  RefreshTokenStrategy,
+} from './strategy';
 
 @Module({
   imports: [StudentModule, PassportModule, JwtModule.register({})],

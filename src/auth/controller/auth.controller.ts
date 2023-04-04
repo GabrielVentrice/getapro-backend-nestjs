@@ -1,22 +1,31 @@
-import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
-import { GetCurrentUserId, Public } from '../../common/decorators';
+import {
+  Controller,
+  Post,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { AuthStudentService } from '../service/auth-student.service';
-import { Tokens } from '../types/tokens.type';
-import { AuthDto } from '../_dto/auth.user.dto';
+import { LocalAuthGuard, AccessTokenAuthGuard } from '../guard';
+import type { Tokens } from '../types/tokens.type';
 
 @Controller('auth/student')
 export class AuthController {
   constructor(private authService: AuthStudentService) {}
 
-  @Public()
+  @UseGuards(LocalAuthGuard)
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  async login(@Body() dto: AuthDto): Promise<Tokens> {
-    return await this.authService.signinLocalStudent(dto);
+  async login(@Request() req): Promise<Tokens> {
+    return this.authService.signinStudent(req.user);
   }
 
+  @UseGuards(AccessTokenAuthGuard)
   @Post('logout')
-  async logout(@GetCurrentUserId() userId: number): Promise<boolean> {
+  async logout(@Request() req): Promise<boolean> {
+    const { sub: userId } = req.user;
+
     return await this.authService.logout(userId);
   }
 }
