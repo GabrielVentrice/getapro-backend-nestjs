@@ -1,13 +1,15 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { Student } from '@prisma/client';
 import * as argon from 'argon2';
-import { Tokens } from '../types/tokens.type';
-import { AuthDto } from '../_dto/auth.user.dto';
-import { JwtPayload } from '../types/jwtPayload.type';
-import { StudentService } from '../../student/service/student.service';
+import { StudentService } from 'src/student/service/student.service';
 import { PrismaService } from '../../prisma/prisma.service';
-import { CreateStudentDto } from '../../student/_dto/create.student.dto';
+import { AT_SECRET_KEY, RT_SECRET_KEY } from '../constants';
+import type { CreateStudentDto } from '../../student/_dto/create.student.dto';
+import type { AuthDto } from '../_dto/auth.user.dto';
+import type { JwtPayload } from '../types/jwtPayload.type';
+import type { Tokens } from '../types/tokens.type';
 
 @Injectable()
 export class AuthStudentService {
@@ -18,28 +20,28 @@ export class AuthStudentService {
     private config: ConfigService,
   ) {}
 
-  async signinLocalStudent({ email, password }: AuthDto): Promise<Tokens> {
+  async validateStudent({ email, password }: AuthDto): Promise<Student> {
     const user = await this.prismaService.student.findFirst({
       where: { email },
     });
-
-    if (!user) throw new ForbiddenException('Access Denied');
+    if (!user) return;
 
     const passwordMatches = await argon.verify(user.hash, password);
+    if (!passwordMatches) return;
 
-    if (!passwordMatches) throw new ForbiddenException('Access Denied');
+    return user;
+  }
 
-    const tokens = await this.getTokens(user.id, user.email);
-    await this.updateRtHash(user.id, tokens.refresh_token);
+  async signinStudent(student: Student): Promise<Tokens> {
+    const tokens = await this.getTokens(student.id, student.email);
+    await this.updateRtHash(student.id, tokens.refresh_token);
 
     return tokens;
   }
 
   async singup(dto: CreateStudentDto): Promise<Tokens> {
-    const newUser = await this.studentService.create(dto);
-
-    const tokens = await this.getTokens(newUser.id, newUser.email);
-    await this.updateRtHash(newUser.id, tokens.refresh_token);
+    const student = await this.studentService.create(dto);
+    const tokens = await this.signinStudent(student);
 
     return tokens;
   }
@@ -98,11 +100,11 @@ export class AuthStudentService {
 
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(jwtPayload, {
-        secret: this.config.get<string>('AT_SECRET'),
+        secret: this.config.get<string>(AT_SECRET_KEY),
         expiresIn: '15m',
       }),
       this.jwtService.signAsync(jwtPayload, {
-        secret: this.config.get<string>('RT_SECRET'),
+        secret: this.config.get<string>(RT_SECRET_KEY),
         expiresIn: '7d',
       }),
     ]);
