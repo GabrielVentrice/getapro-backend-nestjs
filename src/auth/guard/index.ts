@@ -1,2 +1,3 @@
-export { LocalAuthGuard } from './local-auth.guard';
+export { LocalStudentAuthGuard } from './local-student-auth.guard';
+export { LocalTeacherAuthGuard } from './local-teacher-auth.guard';
 export { AccessTokenAuthGuard } from './at-auth.guard';
