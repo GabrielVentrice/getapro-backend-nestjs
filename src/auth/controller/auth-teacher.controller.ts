@@ -6,19 +6,19 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { AuthStudentService } from '../service/auth-student.service';
-import { LocalAuthGuard, AccessTokenAuthGuard } from '../guard';
+import { AuthTeacherService } from '../service/auth-teacher.service';
+import { LocalTeacherAuthGuard, AccessTokenAuthGuard } from '../guard';
 import type { Tokens } from '../types/tokens.type';
 
-@Controller('auth/student')
-export class AuthController {
-  constructor(private authService: AuthStudentService) {}
+@Controller('auth/teacher')
+export class AuthTeacherController {
+  constructor(private authService: AuthTeacherService) {}
 
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(LocalTeacherAuthGuard)
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(@Request() req): Promise<Tokens> {
-    return this.authService.signinStudent(req.user);
+    return this.authService.signinTeacher(req.user);
   }
 
   @UseGuards(AccessTokenAuthGuard)
