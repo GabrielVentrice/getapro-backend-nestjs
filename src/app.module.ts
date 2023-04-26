@@ -14,5 +14,6 @@ import { TeacherModule } from './teacher/teacher.module';
     TeacherModule,
   ],
   exports: [ConfigModule],
+  providers: [],
 })
 export class AppModule {}
