@@ -4,12 +4,15 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { StudentModule } from 'src/student/student.module';
 import { TeacherModule } from 'src/teacher/teacher.module';
-import { AuthStudentController } from './controller/auth-student.controller';
-import { AuthTeacherController } from './controller/auth-teacher.controller';
-import { AuthStudentService } from './service/auth-student.service';
-import { AuthTeacherService } from './service/auth-teacher.service';
+import { AuthAdminController } from './controller/admin/auth-admin.controller';
+import { AuthStudentController } from './controller/student/auth-student.controller';
+import { AuthTeacherController } from './controller/teacher/auth-teacher.controller';
+import { AuthAdminService } from './service/admin/auth-admin.service';
+import { AuthStudentService } from './service/student/auth-student.service';
+import { AuthTeacherService } from './service/teacher/auth-teacher.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
+  LocalAdminStrategy,
   LocalStudentStrategy,
   LocalTeacherStrategy,
   AccessTokenStrategy,
@@ -24,8 +27,10 @@ import {
     JwtModule.register({}),
   ],
   providers: [
+    AuthAdminService,
     AuthStudentService,
     AuthTeacherService,
+    LocalAdminStrategy,
     LocalStudentStrategy,
     LocalTeacherStrategy,
     PrismaService,
@@ -34,6 +39,10 @@ import {
     AccessTokenStrategy,
     RefreshTokenStrategy,
   ],
-  controllers: [AuthStudentController, AuthTeacherController],
+  controllers: [
+    AuthAdminController,
+    AuthStudentController,
+    AuthTeacherController,
+  ],
 })
 export class AuthModule {}
