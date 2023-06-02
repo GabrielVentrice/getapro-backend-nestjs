@@ -15,8 +15,8 @@ import {
 } from '@nestjs/swagger';
 import { AuthAdminService } from '../../service/admin/auth-admin.service';
 import { LocalAdminAuthGuard, AccessTokenAuthGuard } from '../../guard';
-import { AuthDto } from 'src/auth/_dto/auth.user.dto';
-import { AuthResponse } from 'src/auth/types/response.type';
+import { AuthDto } from '../../../auth/_dto/auth.user.dto';
+import { AuthResponse } from '../../../auth/types/response.type';
 import type { Tokens } from '../../types/tokens.type';
 @Controller('auth/admin')
 @ApiTags('Authentication/Admin')

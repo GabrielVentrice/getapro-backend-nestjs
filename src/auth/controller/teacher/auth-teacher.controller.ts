@@ -15,8 +15,8 @@ import {
 } from '@nestjs/swagger';
 import { AuthTeacherService } from '../../service/teacher/auth-teacher.service';
 import { LocalTeacherAuthGuard, AccessTokenAuthGuard } from '../../guard';
-import { AuthDto } from 'src/auth/_dto/auth.user.dto';
-import { AuthResponse } from 'src/auth/types/response.type';
+import { AuthDto } from '../../../auth/_dto/auth.user.dto';
+import { AuthResponse } from '../../../auth/types/response.type';
 import type { Tokens } from '../../types/tokens.type';
 
 @Controller('auth/teacher')
