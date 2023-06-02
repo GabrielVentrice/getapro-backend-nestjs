@@ -9,7 +9,7 @@ import type { CreateTeacherDto } from '../../../teacher/_dto/create.teacher.dto'
 import type { AuthDto } from '../../_dto/auth.user.dto';
 import type { JwtPayload } from '../../types/jwtPayload.type';
 import type { Tokens } from '../../types/tokens.type';
-import { TeacherService } from 'src/teacher/service/teacher.service';
+import { TeacherService } from '../../../teacher/service/teacher.service';
 
 @Injectable()
 export class AuthTeacherService {

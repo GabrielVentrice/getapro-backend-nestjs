@@ -16,8 +16,8 @@ import {
 import { AuthStudentService } from '../../service/student/auth-student.service';
 import { LocalStudentAuthGuard, AccessTokenAuthGuard } from '../../guard';
 import type { Tokens } from '../../types/tokens.type';
-import { AuthDto } from 'src/auth/_dto/auth.user.dto';
-import { AuthResponse } from 'src/auth/types/response.type';
+import { AuthDto } from '../../../auth/_dto/auth.user.dto';
+import { AuthResponse } from '../../../auth/types/response.type';
 
 @Controller('auth/student')
 @ApiTags('Authentication/Student')

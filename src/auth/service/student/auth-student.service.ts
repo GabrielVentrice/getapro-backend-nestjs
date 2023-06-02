@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Student } from '@prisma/client';
 import * as argon from 'argon2';
-import { StudentService } from 'src/student/service/student.service';
+import { StudentService } from '../../../student/service/student.service';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { AT_SECRET_KEY, RT_SECRET_KEY } from '../../constants';
 import type { CreateStudentDto } from '../../../student/_dto/create.student.dto';
@@ -32,7 +32,7 @@ export class AuthStudentService {
     return user;
   }
 
-  async signinStudent(student: Student): Promise<Tokens> {
+  async signinStudent(student: Pick<Student, 'id' | 'email'>): Promise<Tokens> {
     const tokens = await this.getTokens(student.id, student.email);
     await this.updateRtHash(student.id, tokens.refresh_token);
 
