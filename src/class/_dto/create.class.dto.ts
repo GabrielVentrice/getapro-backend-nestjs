@@ -1,13 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ClassStatus } from '@prisma/client';
 import { IsNotEmpty, IsNumber, IsString, IsOptional } from 'class-validator';
 
 export class CreateClassDto {
-  @IsString()
-  @IsOptional()
-  @ApiProperty()
-  discordLink?: string;
-
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty()
@@ -20,6 +15,11 @@ export class CreateClassDto {
 
   @IsString()
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({ enum: ClassStatus })
   status: ClassStatus;
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional()
+  discordLink?: string;
 }

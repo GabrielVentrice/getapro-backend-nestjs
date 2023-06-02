@@ -18,13 +18,43 @@ export class ClassService {
         status: status,
         link: discordLink,
       },
+      select: {
+        id: true,
+        link: true,
+        student: {
+          select: {
+            name: true,
+          },
+        },
+        teacher: {
+          select: {
+            name: true,
+          },
+        },
+      },
     });
 
     return createdClass;
   }
 
   findById(id: number) {
-    return this.prisma.class.findFirst({ where: { id } });
+    return this.prisma.class.findFirst({
+      where: { id },
+      select: {
+        id: true,
+        link: true,
+        student: {
+          select: {
+            name: true,
+          },
+        },
+        teacher: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
   }
 
   async remove(id: number) {
