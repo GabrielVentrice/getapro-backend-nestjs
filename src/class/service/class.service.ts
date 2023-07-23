@@ -57,6 +57,31 @@ export class ClassService {
     });
   }
 
+  async upsertClassLink(classId: number, link: string) {
+    return this.prisma.class.update({
+      where: {
+        id: classId,
+      },
+      data: {
+        link,
+      },
+      select: {
+        id: true,
+        link: true,
+        student: {
+          select: {
+            name: true,
+          },
+        },
+        teacher: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+  }
+
   async remove(id: number) {
     const foundClass = await this.prisma.class.findFirst({ where: { id } });
 
