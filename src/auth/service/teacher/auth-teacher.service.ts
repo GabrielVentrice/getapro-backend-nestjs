@@ -8,7 +8,7 @@ import { AT_SECRET_KEY, RT_SECRET_KEY } from '../../constants';
 import type { CreateTeacherDto } from '../../../teacher/_dto/create.teacher.dto';
 import type { AuthDto } from '../../_dto/auth.user.dto';
 import type { JwtPayload } from '../../types/jwtPayload.type';
-import type { Tokens } from '../../types/tokens.type';
+import type { TokensWithExpirationTime, Tokens } from '../../types/tokens.type';
 import { TeacherService } from '../../../teacher/service/teacher.service';
 
 @Injectable()
@@ -32,11 +32,28 @@ export class AuthTeacherService {
     return user;
   }
 
-  async signinTeacher(teacher: Teacher): Promise<Tokens> {
-    const tokens = await this.getTokens(teacher.id, teacher.email);
-    await this.updateRtHash(teacher.id, tokens.refresh_token);
+  async signinTeacher(teacher: Teacher): Promise<TokensWithExpirationTime> {
+    const { access_token, refresh_token } = await this.getTokens(
+      teacher.id,
+      teacher.email,
+    );
+    await this.updateRtHash(teacher.id, refresh_token);
 
-    return tokens;
+    const { exp: atExp } = this.jwtService.decode(access_token) as Record<
+      string,
+      any
+    >;
+    const { exp: rtExp } = this.jwtService.decode(refresh_token) as Record<
+      string,
+      any
+    >;
+
+    return {
+      access_token,
+      access_token_expiration: atExp * 1000,
+      refresh_token,
+      refresh_token_expiration: rtExp * 1000,
+    };
   }
 
   async singup(dto: CreateTeacherDto): Promise<Tokens> {
