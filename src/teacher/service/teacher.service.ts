@@ -8,7 +8,13 @@ export class TeacherService {
   constructor(private prisma: PrismaService) {}
 
   findAll() {
-    return this.prisma.teacher.findMany();
+    return this.prisma.teacher.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    });
   }
 
   async create(dto: CreateTeacherDto) {
