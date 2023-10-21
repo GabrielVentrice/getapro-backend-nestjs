@@ -32,6 +32,26 @@ export class AuthStudentService {
     return user;
   }
 
+  async validateStudentEmail(email: string): Promise<Student> {
+    const user = await this.prismaService.student.findFirst({
+      where: { email },
+    });
+
+    if (!user) return;
+
+    return user;
+  }
+
+  async validateStudentId(id: number): Promise<Student> {
+    const user = await this.prismaService.student.findFirst({
+      where: { id },
+    });
+
+    if (!user) return;
+
+    return user;
+  }
+
   async signinStudent(student: Pick<Student, 'id' | 'email'>): Promise<Tokens> {
     const tokens = await this.getTokens(student.id, student.email);
     await this.updateRtHash(student.id, tokens.refresh_token);
@@ -110,5 +130,62 @@ export class AuthStudentService {
     ]);
 
     return { access_token: at, refresh_token: rt };
+  }
+
+  generateRecoveryToken(student: Student): string {
+    // TODO: study the possibility to change jwtSecret by a newly generated
+    // hash and store it in the user model for greater security
+    const jwtSecret = this.config.get<string>(AT_SECRET_KEY);
+    const studentSecret = jwtSecret + student.hash;
+
+    const payload = {
+      sub: student.id,
+      email: student.email,
+    };
+
+    const recoveryToken = this.jwtService.sign(payload, {
+      secret: studentSecret,
+      expiresIn: '15m',
+    });
+
+    return recoveryToken;
+  }
+
+  validateRecoveryToken(
+    student: Student,
+    token: string,
+  ): { sub: number; email: string } {
+    const jwtSecret = this.config.get<string>(AT_SECRET_KEY);
+    const studentSecret = jwtSecret + student.hash;
+
+    const payload = this.jwtService.verify<{ sub: number; email: string }>(
+      token,
+      {
+        secret: studentSecret,
+      },
+    );
+
+    return payload;
+  }
+
+  async recoverPassword(
+    studentId: number,
+    password: string,
+  ): Promise<Pick<Student, 'id' | 'email' | 'name'>> {
+    const hash = await argon.hash(password);
+
+    const updatedStudent = await this.prismaService.student.update({
+      where: { id: studentId },
+      data: {
+        hash,
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+      },
+    });
+
+    return updatedStudent;
   }
 }

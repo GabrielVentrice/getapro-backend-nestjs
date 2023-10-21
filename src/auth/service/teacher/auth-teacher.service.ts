@@ -32,7 +32,27 @@ export class AuthTeacherService {
     return user;
   }
 
-  async signinTeacher(teacher: Teacher): Promise<Tokens> {
+  async validateTeacherEmail(email: string): Promise<Teacher> {
+    const user = await this.prismaService.teacher.findFirst({
+      where: { email },
+    });
+
+    if (!user) return;
+
+    return user;
+  }
+
+  async validateTeacherId(id: number): Promise<Teacher> {
+    const user = await this.prismaService.teacher.findFirst({
+      where: { id },
+    });
+
+    if (!user) return;
+
+    return user;
+  }
+
+  async signinTeacher(teacher: Pick<Teacher, 'id' | 'email'>): Promise<Tokens> {
     const tokens = await this.getTokens(teacher.id, teacher.email);
     await this.updateRtHash(teacher.id, tokens.refresh_token);
 
@@ -110,5 +130,62 @@ export class AuthTeacherService {
     ]);
 
     return { access_token: at, refresh_token: rt };
+  }
+
+  generateRecoveryToken(teacher: Teacher): string {
+    // TODO: study the possibility to change jwtSecret by a newly generated
+    // hash and store it in the user model for greater security
+    const jwtSecret = this.config.get<string>(AT_SECRET_KEY);
+    const teacherSecret = jwtSecret + teacher.hash;
+
+    const payload = {
+      sub: teacher.id,
+      email: teacher.email,
+    };
+
+    const recoveryToken = this.jwtService.sign(payload, {
+      secret: teacherSecret,
+      expiresIn: '15m',
+    });
+
+    return recoveryToken;
+  }
+
+  validateRecoveryToken(
+    teacher: Teacher,
+    token: string,
+  ): { sub: number; email: string } {
+    const jwtSecret = this.config.get<string>(AT_SECRET_KEY);
+    const teacherSecret = jwtSecret + teacher.hash;
+
+    const payload = this.jwtService.verify<{ sub: number; email: string }>(
+      token,
+      {
+        secret: teacherSecret,
+      },
+    );
+
+    return payload;
+  }
+
+  async recoverPassword(
+    teacherId: number,
+    password: string,
+  ): Promise<Pick<Teacher, 'id' | 'email' | 'name'>> {
+    const hash = await argon.hash(password);
+
+    const updatedTeacher = await this.prismaService.teacher.update({
+      where: { id: teacherId },
+      data: {
+        hash,
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+      },
+    });
+
+    return updatedTeacher;
   }
 }
