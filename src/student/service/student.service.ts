@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateStudentDto } from '../_dto/create.student.dto';
 import * as argon from 'argon2';
 import { PrismaService } from '../../prisma/prisma.service';
+import { UpdateStudentDiscordIdDto } from '../_dto/update.student-discord-id.dto';
 
 @Injectable()
 export class StudentService {
@@ -26,12 +27,31 @@ export class StudentService {
 
     const newUser = await this.prisma.student.create({
       data: { email, name, hash },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
     });
 
-    delete newUser.hash;
-    delete newUser.hashRt;
-
     return newUser;
+  }
+
+  async updateDiscordId(studentId: number, dto: UpdateStudentDiscordIdDto) {
+    const { discordId } = dto;
+
+    return this.prisma.student.update({
+      where: {
+        id: studentId,
+      },
+      data: { discordId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        discordId: true,
+      },
+    });
   }
 
   findById(id: number) {

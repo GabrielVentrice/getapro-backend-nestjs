@@ -11,14 +11,5 @@ export class DefaultTeacherResponse {
   email: string;
 
   @ApiResponseProperty()
-  hash?: string;
-
-  @ApiResponseProperty()
-  hashRt?: string;
-
-  @ApiResponseProperty()
-  createdAt: string;
-
-  @ApiResponseProperty()
-  updatedAt: string;
+  discordId?: string;
 }
