@@ -17,11 +17,15 @@ import {
 import { CreateClassDto } from '../_dto/create.class.dto';
 import { ClassService } from '../service/class.service';
 import { DefaultClassResponse } from '../types/response.type';
+import { DiscordService } from 'src/discord/discord.service';
 
 @Controller('class')
 @ApiTags('Class')
 export class ClassController {
-  constructor(private classService: ClassService) {}
+  constructor(
+    private classService: ClassService,
+    private discordService: DiscordService,
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'List all classes' })
@@ -34,7 +38,20 @@ export class ClassController {
   @ApiOperation({ summary: 'Create new class' })
   @ApiCreatedResponse({ type: DefaultClassResponse })
   async create(@Body() createClassDto: CreateClassDto) {
-    return await this.classService.create(createClassDto);
+    const createdClass = await this.classService.create(createClassDto);
+
+    const {
+      student: { name: studentName },
+      teacher: { name: teacherName },
+    } = createdClass;
+
+    const { textChannel } = await this.discordService.createClassChannel(
+      `${studentName} + ${teacherName}`,
+    );
+
+    console.log(textChannel.url);
+
+    return this.classService.upsertClassLink(createdClass.id, textChannel.url);
   }
 
   @Get(':id')

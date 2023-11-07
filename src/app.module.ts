@@ -7,6 +7,9 @@ import { TeacherModule } from './teacher/teacher.module';
 import { ClassModule } from './class/class.module';
 import { ClassRequestModule } from './class-request/class-request.module';
 import { GameModule } from './game/game.module';
+// import { NecordModule } from 'necord';
+// import { IntentsBitField } from 'discord.js';
+import { DiscordModule } from './discord/discord.module';
 
 @Module({
   imports: [
@@ -18,6 +21,7 @@ import { GameModule } from './game/game.module';
     ClassModule,
     ClassRequestModule,
     GameModule,
+    DiscordModule,
   ],
   exports: [ConfigModule],
   providers: [],
