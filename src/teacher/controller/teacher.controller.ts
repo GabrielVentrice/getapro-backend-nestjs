@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Put,
 } from '@nestjs/common';
 import {
   ApiOkResponse,
@@ -16,6 +17,7 @@ import {
 import { CreateTeacherDto } from '../_dto/create.teacher.dto';
 import { TeacherService } from '../service/teacher.service';
 import { DefaultTeacherResponse } from '../types/response.type';
+import { UpdateTeacherDiscordIdDto } from '../_dto/update.teacher-discord-id.dto';
 
 @Controller('teacher')
 @ApiTags('Teacher')
@@ -34,6 +36,19 @@ export class TeacherController {
   @ApiOkResponse({ type: DefaultTeacherResponse })
   async create(@Body() CreateTeacherDto: CreateTeacherDto) {
     return await this.teacherService.create(CreateTeacherDto);
+  }
+
+  @Put(':id/discord')
+  @ApiOperation({ summary: "Update teacher's discord ID" })
+  @ApiOkResponse({ type: DefaultTeacherResponse })
+  async updateTeacherDiscordId(
+    @Param('id', ParseIntPipe) teacherId: number,
+    @Body() updateTeacherDiscordIdDto: UpdateTeacherDiscordIdDto,
+  ) {
+    return this.teacherService.updateDiscordId(
+      teacherId,
+      updateTeacherDiscordIdDto,
+    );
   }
 
   @Get(':id')

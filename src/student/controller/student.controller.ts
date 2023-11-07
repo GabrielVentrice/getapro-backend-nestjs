@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Put,
   Post,
 } from '@nestjs/common';
 import {
@@ -17,6 +18,7 @@ import {
 import { CreateStudentDto } from '../_dto/create.student.dto';
 import { StudentService } from '../service/student.service';
 import { DefaultStudentResponse } from '../types/response.type';
+import { UpdateStudentDiscordIdDto } from '../_dto/update.student-discord-id.dto';
 
 @Controller('student')
 @ApiTags('Student')
@@ -35,6 +37,19 @@ export class StudentController {
   @ApiCreatedResponse({ type: DefaultStudentResponse })
   async create(@Body() createStudentDto: CreateStudentDto) {
     return await this.studentService.create(createStudentDto);
+  }
+
+  @Put(':id/discord')
+  @ApiOperation({ summary: "Update student's discord ID" })
+  @ApiOkResponse({ type: DefaultStudentResponse })
+  async updateStudentDiscordId(
+    @Param('id', ParseIntPipe) studentId: number,
+    @Body() updateStudentDiscordIdDto: UpdateStudentDiscordIdDto,
+  ) {
+    return this.studentService.updateDiscordId(
+      studentId,
+      updateStudentDiscordIdDto,
+    );
   }
 
   @Get(':id')
