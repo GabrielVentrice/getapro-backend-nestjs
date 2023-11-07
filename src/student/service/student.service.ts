@@ -8,7 +8,13 @@ export class StudentService {
   constructor(private prisma: PrismaService) {}
 
   findAll() {
-    return this.prisma.student.findMany();
+    return this.prisma.student.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    });
   }
 
   async create(dto: CreateStudentDto) {
